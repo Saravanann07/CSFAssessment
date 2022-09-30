@@ -3,6 +3,11 @@ package vttp2022.assessment.csf.orderbackend.models;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
 // IMPORTANT: You can add to this class, but you cannot delete its original content
 
 public class Order {
@@ -40,4 +45,37 @@ public class Order {
 
 	public void setComments(String comments) { this.comments = comments; }
 	public String getComments() { return this.comments; }
+
+	
+
+	public JsonObject toJson(){
+		return Json.createObjectBuilder()
+				.add("orderId", orderId)
+				.add("email", email)
+				.build();
+	}
+
+
+	public static Order createFromRowSet(SqlRowSet rs){
+
+		Order order = new Order();
+		order.setOrderId(rs.getInt(""));
+		order.setEmail(rs.getString("email"));
+		return order;
+	}
+
+	public static Order create(JsonObject obj){
+		Order order = new Order();
+		order.setName(obj.getString("name"));
+		order.setEmail(obj.getString("email"));
+		order.setSize(obj.getInt("size"));
+		order.setSauce(obj.getString("sauce"));
+		order.setThickCrust(obj.getBoolean("thickCrust"));
+		// order.setToppings(obj.getJsonArray("toppings"));
+
+		return order;
+
+	}
+
+	
 }
