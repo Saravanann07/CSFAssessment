@@ -3,6 +3,7 @@ package vttp2022.assessment.csf.orderbackend.models;
 import java.util.LinkedList;
 import java.util.List;
 
+
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import jakarta.json.Json;
@@ -65,6 +66,7 @@ public class Order {
 	}
 
 	public static Order create(JsonObject obj){
+		
 		Order order = new Order();
 		order.setName(obj.getString("name"));
 		order.setEmail(obj.getString("email"));
@@ -72,6 +74,7 @@ public class Order {
 		order.setSauce(obj.getString("sauce"));
 		order.setThickCrust(obj.getBoolean("thickCrust"));
 		// order.setToppings(obj.getJsonArray("toppings"));
+		order.setComments(obj.getString("comments"));
 
 		return order;
 

@@ -21,11 +21,11 @@ public class OrderRepository {
     @Autowired 
     private JdbcTemplate template;
 
-    public Integer orderCreated(Order order){
-        int count = template.update(SQL_ADD_ORDER, order.getName(), order.getEmail(),
+    public void orderCreated(Order order){
+        template.update(SQL_ADD_ORDER, order.getName(), order.getEmail(),
         order.getSize(), order.isThickCrust(), order.getSauce(), order.getToppings(), order.getComments());
 
-        return count;
+        
     }
 
     public List<OrderSummary> getOrderByEmail(String email){

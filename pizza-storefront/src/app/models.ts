@@ -12,7 +12,7 @@ export interface Order {
 export interface OrderSummary{
 
     orderId: Number
-    totalPrice: Number
+    email: String
 
 
 }

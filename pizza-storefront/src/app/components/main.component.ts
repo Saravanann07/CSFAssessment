@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Order, OrderSummary } from '../models';
 import { PizzaService } from '../pizza.service';
@@ -28,6 +29,8 @@ export class MainComponent implements OnInit {
 
   orderForm!: FormGroup
 
+  emailForm!: FormGroup
+
   toppingsArray!: FormArray
 
   pizzaToppings = PizzaToppings
@@ -40,7 +43,8 @@ export class MainComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private pizzaSvc: PizzaService, 
-    private router: Router, private activatedRoute: ActivatedRoute) {}
+    private router: Router, private activatedRoute: ActivatedRoute,
+    private title: Title) {}
 
   ngOnInit(): void {
     this.createOrder()
@@ -52,8 +56,6 @@ export class MainComponent implements OnInit {
   }
 
   
-
-
   createOrder(){
     this.toppingsArray = this.fb.array(
       this.pizzaToppings.map(() => this.fb.control(''))
@@ -61,7 +63,7 @@ export class MainComponent implements OnInit {
     this.orderForm = this.fb.group({
       name: this.fb.control<string>('', [Validators.required]),
       email: this.fb.control<string>('', [Validators.required]),
-      pizzaSize: this.fb.control<string>(this.pizzaSize,Validators.required),
+      pizzaSize: this.fb.control<string>(this.pizzaSize, [Validators.required]),
       base: this.fb.control<boolean>(this.order?.base, Validators.required),
       sauce: this.fb.control<string>('', Validators.required),
       toppings: this.toppingsArray,
@@ -69,14 +71,15 @@ export class MainComponent implements OnInit {
     })
   }
 
+ 
   orderCreated(){
     console.info('Place order button clicked')
     const order: Order = this.orderForm.value as Order
-    const email = this.activatedRoute.snapshot.params['email']
+    order.email = this.activatedRoute.snapshot.params['email']
     this.pizzaSvc.createOrder(order)
           .then(result => {
             console.info('>>>>> result: ', result)
-            this.router.navigate(['/orders', email])
+            this.router.navigate(['/orders', order.email])
           }).catch((error: HttpErrorResponse) => {
             console.error('>>>> error: ', error)
           })
@@ -86,7 +89,9 @@ export class MainComponent implements OnInit {
     console.info('List button clicked')
     const orderSummary: OrderSummary = this.orderForm.value as OrderSummary
    this.email = this.activatedRoute.snapshot.params['email']
+   console.info(">>>>> Email:", this.email)
     this.pizzaSvc.getOrders(this.email)
+    
         .then(result => {
           this.orderList = result
           console.info('>>>> orders retrived', this.orderList)
